@@ -26,32 +26,37 @@ export default class BoardComponent {
   readonly #httpClient = inject(HttpClient);
   readonly #router = inject(Router);
 
-  protected readonly board = initialSignal<BoardDTO>('board');
+  protected readonly game = initialSignal<BoardDTO>('board');
   protected readonly currentPlayer = signal<Player>('1');
   protected readonly savable = signal<boolean>(false);
-  protected readonly size = computed(() => Math.floor(Math.sqrt(this.board()?.board.length ?? 9)));
+  protected readonly size = computed(() => Math.floor(Math.sqrt(this.game()?.board.length ?? 9)));
   protected winner: Cell = '0';
 
   constructor() {
     afterNextRender(() => {
-      this.savable.set(/[12]/.test(this.board().board));
+      const {board} = this.game();
+      const player1Moves = (/1/.exec(board) ?? []).length;
+      const player2Moves = (/2/.exec(board) ?? []).length;
+
+      this.currentPlayer.set(player1Moves > player2Moves ? '2' : '1');
+      this.savable.set(/[12]/.test(board));
     });
   }
 
   async move(index: number) {
-    const board = this.board();
+    const {board} = this.game();
 
-    if (board.board[index] === '0') {
-      const current = [...board.board];
+    if (board[index] === '0') {
+      const current = [...board];
       let dialog: MatDialogRef<EndGameDialog> | null = null;
 
       current.splice(index, 1, this.currentPlayer());
-      board.board = current.join('');
+      this.game().board = current.join('');
 
       this.#checkWinner();
       if (this.winner !== '0') {
         dialog = this.#dialog.open(EndGameDialog, {data: this.winner});
-      } else if (!board.board.includes('0')) {
+      } else if (!board.includes('0')) {
         dialog = this.#dialog.open(EndGameDialog, {data: '0'});
       }
 
@@ -70,7 +75,7 @@ export default class BoardComponent {
   }
 
   async save() {
-    const board = this.board();
+    const board = this.game();
 
     if (board.id === undefined) {
       const dialogRef = this.#dialog.open(AddNameDialog);
@@ -125,7 +130,7 @@ export default class BoardComponent {
 
     for (let i = 0; i < size; i++) {
       const from = i * size;
-      board.push([...this.board().board.slice(from, from + size)] as Cell[]);
+      board.push([...this.game().board.slice(from, from + size)] as Cell[]);
     }
 
     // horizontal
