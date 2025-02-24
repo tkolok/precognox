@@ -28,8 +28,8 @@ export default class BoardComponent {
 
   protected readonly game = initialSignal<BoardDTO>('board');
   protected readonly currentPlayer = signal<Player>('1');
-  protected readonly savable = signal<boolean>(false);
   protected readonly size = computed(() => Math.floor(Math.sqrt(this.game()?.board.length ?? 9)));
+  protected readonly state = signal<'END' | 'IN_PROGRESS' | 'START'>('START');
   protected winner: Cell = '0';
 
   constructor() {
@@ -39,7 +39,7 @@ export default class BoardComponent {
       const player2Moves = (/2/.exec(board) ?? []).length;
 
       this.currentPlayer.set(player1Moves > player2Moves ? '2' : '1');
-      this.savable.set(/[12]/.test(board));
+      this.state.set((player1Moves || player2Moves) ? 'IN_PROGRESS' : 'START');
     });
   }
 
@@ -62,14 +62,14 @@ export default class BoardComponent {
 
       if (dialog) {
         const result = await firstValueFrom(dialog.afterClosed());
-        this.savable.set(false);
+        this.state.set('END');
 
         if (result) {
           this.#router.navigateByUrl('/board/new', {onSameUrlNavigation: 'reload'});
         }
       } else {
         this.currentPlayer.update(current => current === '1' ? '2' : '1');
-        this.savable.set(true);
+        this.state.set('IN_PROGRESS');
       }
     }
   }

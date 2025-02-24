@@ -9,7 +9,7 @@
 </div>
 <div>{{ currentPlayer() | cellFormatter }} moves</div>
 <button (click)="save()"
-        [disabled]="!savable()"
+        [disabled]="state() !== 'IN_PROGRESS'"
         mat-flat-button>
   Save
 </button>
