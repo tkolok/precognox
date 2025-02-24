@@ -1,4 +1,5 @@
 @let boardData = board();
+<div>{{ getValue(currentPlayer()) }} moves</div>
 <div [style.--board-size]="size()"
      class="board">
   @for (cell of boardData.board; track $index) {
@@ -10,3 +11,6 @@
         mat-flat-button>
   Save
 </button>
+@if (winner() !== '0') {
+  <div>Winner is {{ getValue(winner()) }}</div>
+}

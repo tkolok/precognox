@@ -21,8 +21,10 @@ export default class BoardComponent {
   readonly #httpClient = inject(HttpClient);
 
   protected readonly board = initialSignal<BoardDTO>('board');
+  protected readonly currentPlayer = signal<Player>('1');
   protected readonly savable = signal<boolean>(false);
   protected readonly size = computed(() => Math.floor(Math.sqrt(this.board()?.board.length ?? 9)));
+  protected readonly winner = signal<Cell>('0');
 
   constructor() {
     afterNextRender(() => {
@@ -40,8 +42,16 @@ export default class BoardComponent {
     if (board.board[index] === '0') {
       const current = [...board.board];
 
-      current.splice(index, 1, '1');
+      current.splice(index, 1, this.currentPlayer());
       board.board = current.join('');
+
+      this.#checkWinner();
+
+      if (!board.board.includes('0')) {
+        console.log('end');
+      }
+
+      this.currentPlayer.update(current => current === '1' ? '2' : '1');
       this.savable.set(true);
     }
   }
@@ -76,6 +86,49 @@ export default class BoardComponent {
       this.#httpClient.patch(`/boards/${board.id}`, body);
     }
   }
+
+  #checkRow(board: Cell[][], fromX: number, fromY: number, incX: number, incY: number) {
+    if (this.winner() === '0') {
+      const first = board[fromY][fromX];
+
+      if (first === '0') {
+        return;
+      }
+
+      const size = this.size();
+      for (let x = fromX, y = fromY; x < size && y < size; x += incX, y += incY) {
+        if (board[y][x] !== first) {
+          return;
+        }
+      }
+
+      this.winner.set(first);
+    }
+  }
+
+  #checkWinner() {
+    const board: Cell[][] = [];
+    const size = this.size();
+
+    for (let i = 0; i < size; i++) {
+      const from = i * size;
+      board.push([...this.board().board.slice(from, from + size)] as Cell[]);
+    }
+
+    // horizontal
+    for (let y = 0; y < size; y++) {
+      this.#checkRow(board, 0, y, 1, 0);
+    }
+
+    // vertical
+    for (let x = 0; x < size; x++) {
+      this.#checkRow(board, x, 0, 0, 1);
+    }
+
+    // diagonal
+    this.#checkRow(board, 0, 0, 1, 1);
+    this.#checkRow(board, 0, size - 1, 1, -1);
+  }
 }
 
 export type BoardDTO = {
@@ -83,4 +136,5 @@ export type BoardDTO = {
   id?: number;
   name: string;
 }
-
+type Cell = '0' | Player;
+type Player = '1' | '2';
