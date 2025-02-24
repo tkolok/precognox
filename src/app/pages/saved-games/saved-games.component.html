@@ -1,7 +1,27 @@
-<ul>
-  @for (game of games(); track game.id) {
-    <li>
-      <a [routerLink]="['/board', game.id]">{{ game.name }}</a>
-    </li>
+<div id="savedGameListFilter">
+  <mat-form-field>
+    <mat-label>Search</mat-label>
+    <input [(ngModel)]="filter"
+           matInput
+           required>
+  </mat-form-field>
+</div>
+<div id="savedGameList">
+  @for (game of filteredGames(); track game.id) {
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ game.name }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-actions>
+        <a mat-button
+           [routerLink]="['/board', game.id]">
+          Continue
+        </a>
+        <button mat-button
+                color="warn">
+          Delete
+        </button>
+      </mat-card-actions>
+    </mat-card>
   }
-</ul>
+</div>

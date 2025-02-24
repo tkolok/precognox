@@ -1,0 +1,16 @@
+#savedGameList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+
+  > * {
+    margin-bottom: 1rem;
+    width: 200px;
+  }
+}
+
+#savedGameListFilter {
+  margin-bottom: 2rem;
+  text-align: center;
+}
