@@ -7,6 +7,7 @@ Köszönöm a lehetőséget, tetszett a feladat!
 - Teszteket egyáltalán nem írtam, csak az automatikusan generált fájlok érhetőek el.
 - Mindenhol a `localhost:5000`-ra hivatkozok, mert valamiért nem akarta az Angular feldolgozni a `proxy.conf.json` fájlomat, de nem akartam ezzel húzni az időt.
 - Mindenhol relatív pathokat használtam (ami engem kifejezetten zavar), de 10 perc alatt nem tudtam beállítani az IDEA-ben, ezért ezzel sem szórakoztam.
+- O és X helyett érdemesebb lenne valamilyen színes svg-t használni.
 
 ## Megjegyzések
 
