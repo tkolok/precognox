@@ -1,21 +1,22 @@
 import {HttpClient} from '@angular/common/http';
 import {afterNextRender, Component, computed, inject, signal} from '@angular/core';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatMiniFabButton} from '@angular/material/button';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
 import {BoardDTO} from '../../../types/board';
 import {Cell, Player} from '../../../types/cell';
+import {CellPipe} from '../../pipes/cell.pipe';
 import {initialSignal} from '../../utils/signals';
 import {AddNameDialog} from './add-name/add-name.dialog';
 import {EndGameDialog} from './end-game/end-game.dialog';
 
-const cells = ['-', 'O', 'X'];
-
 @Component({
   standalone: true,
   imports: [
-    MatButton
+    CellPipe,
+    MatButton,
+    MatMiniFabButton
   ],
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss'
@@ -35,10 +36,6 @@ export default class BoardComponent {
     afterNextRender(() => {
       this.savable.set(/[12]/.test(this.board().board));
     });
-  }
-
-  getValue(cell: string) {
-    return cells[+cell];
   }
 
   async move(index: number) {

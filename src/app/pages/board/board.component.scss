@@ -1,4 +1,12 @@
+:host {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
 .board {
   display: grid;
+  gap: .25rem;
   grid-template-columns: repeat(var(--board-size), 1fr);
 }

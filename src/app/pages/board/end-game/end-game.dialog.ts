@@ -3,6 +3,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {MatButton} from '@angular/material/button';
 import {MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent} from '@angular/material/dialog';
 import {Cell} from '../../../../types/cell';
+import {CellPipe} from '../../../pipes/cell.pipe';
 
 @Component({
   selector: 'app-end-game',
@@ -12,7 +13,8 @@ import {Cell} from '../../../../types/cell';
     MatDialogActions,
     MatDialogContent,
     ReactiveFormsModule,
-    MatDialogClose
+    MatDialogClose,
+    CellPipe
   ],
   templateUrl: './end-game.dialog.html',
   styleUrl: './end-game.dialog.scss'

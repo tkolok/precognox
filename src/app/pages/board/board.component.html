@@ -1,11 +1,14 @@
 @let boardData = board();
-<div>{{ getValue(currentPlayer()) }} moves</div>
 <div [style.--board-size]="size()"
      class="board">
   @for (cell of boardData.board; track $index) {
-    <button (click)="move($index)">{{ getValue(cell) }}</button>
+    <button (click)="move($index)"
+            mat-mini-fab>
+      {{ cell | cellFormatter }}
+    </button>
   }
 </div>
+<div>{{ currentPlayer() | cellFormatter }} moves</div>
 <button (click)="save()"
         [disabled]="!savable()"
         mat-flat-button>
