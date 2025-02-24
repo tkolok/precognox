@@ -1,7 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {inject} from '@angular/core';
 import {ActivatedRouteSnapshot} from '@angular/router';
-import {firstValueFrom} from 'rxjs';
+import {AsyncClientService} from '../services/async-client.service';
 
 export function boardResolver(snapshot: ActivatedRouteSnapshot) {
   const id = snapshot.paramMap.get('id');
@@ -19,5 +19,5 @@ export function boardResolver(snapshot: ActivatedRouteSnapshot) {
 }
 
 export function savedGamesResolver() {
-  return firstValueFrom(inject(HttpClient).get('http://localhost:5000/boards'));
+  return inject(AsyncClientService).getSavedGames();
 }
