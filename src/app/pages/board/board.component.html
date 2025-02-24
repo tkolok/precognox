@@ -1,0 +1,12 @@
+@let boardData = board();
+<div [style.--board-size]="size()"
+     class="board">
+  @for (cell of boardData.board; track $index) {
+    <button (click)="move($index)">{{ getValue(cell) }}</button>
+  }
+</div>
+<button (click)="save()"
+        [disabled]="!savable()"
+        mat-flat-button>
+  Save
+</button>
