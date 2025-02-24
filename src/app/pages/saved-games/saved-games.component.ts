@@ -8,6 +8,7 @@ import {MatInput} from '@angular/material/input';
 import {RouterLink} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
 import {BoardDTO} from '../../../types/board';
+import {CellPipe} from '../../pipes/cell.pipe';
 import {initialSignal} from '../../utils/signals';
 
 @Component({
@@ -21,7 +22,9 @@ import {initialSignal} from '../../utils/signals';
     FormsModule,
     MatFormField,
     MatLabel,
-    MatInput
+    MatInput,
+    CellPipe,
+    CellPipe
   ],
   templateUrl: './saved-games.component.html',
   styleUrl: './saved-games.component.scss'
@@ -32,6 +35,10 @@ export default class SavedGamesComponent {
   protected readonly allGames = initialSignal<BoardDTO[]>('games');
   readonly filter = model<string>('');
   protected readonly filteredGames = computed<BoardDTO[]>(() => this.#computeFilteredGames());
+
+  getSize(game: BoardDTO) {
+    return Math.floor(Math.sqrt(game.board.length));
+  }
 
   async remove(game: BoardDTO) {
     try {

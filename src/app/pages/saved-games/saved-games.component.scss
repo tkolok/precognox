@@ -1,3 +1,33 @@
+mat-card-content {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+mat-card-header {
+  justify-content: center;
+}
+
+.mat-mdc-card-actions {
+  justify-content: center;
+}
+
+.mini-board {
+  background: rgba(0, 0, 0, .5);
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(var(--board-size), 1fr);
+
+  > * {
+    align-items: center;
+    background: var(--mdc-outlined-card-container-color);
+    display: inline-flex;
+    height: 1.5em;
+    justify-content: center;
+    width: 1.5em;
+  }
+}
+
 #savedGameList {
   display: flex;
   flex-wrap: wrap;

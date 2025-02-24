@@ -12,6 +12,16 @@
       <mat-card-header>
         <mat-card-title>{{ game.name }}</mat-card-title>
       </mat-card-header>
+      <mat-card-content>
+        <div class="mini-board"
+             [style.--board-size]="getSize(game)">
+          @for (cell of game.board; track $index) {
+            <div class="cell">
+              {{ cell | cellFormatter }}
+            </div>
+          }
+        </div>
+      </mat-card-content>
       <mat-card-actions>
         <a mat-button
            [routerLink]="['/board', game.id]">
