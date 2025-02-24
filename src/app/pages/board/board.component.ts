@@ -22,6 +22,7 @@ export default class BoardComponent {
 
   protected readonly board = initialSignal<BoardDTO>('board');
   protected readonly currentPlayer = signal<Player>('1');
+  protected readonly draw = signal<boolean>(false);
   protected readonly savable = signal<boolean>(false);
   protected readonly size = computed(() => Math.floor(Math.sqrt(this.board()?.board.length ?? 9)));
   protected readonly winner = signal<Cell>('0');
@@ -46,11 +47,7 @@ export default class BoardComponent {
       board.board = current.join('');
 
       this.#checkWinner();
-
-      if (!board.board.includes('0')) {
-        console.log('end');
-      }
-
+      this.draw.set(!board.board.includes('0'));
       this.currentPlayer.update(current => current === '1' ? '2' : '1');
       this.savable.set(true);
     }
