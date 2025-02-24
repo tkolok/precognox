@@ -32,7 +32,8 @@ export class AppComponent {
       const size = await firstValueFrom(this.#dialog.open(NewGameDialog).afterClosed());
 
       if (size) {
-        this.#router.navigate(['/board/new'], {queryParams: {size}});
+        await this.#router.navigate(['/board/new'], {queryParams: {size}});
+        location.reload();
       }
     } catch {
     }
