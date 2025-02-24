@@ -2,7 +2,6 @@ import {HttpClient} from '@angular/common/http';
 import {afterNextRender, Component, computed, inject, signal} from '@angular/core';
 import {MatButton, MatMiniFabButton} from '@angular/material/button';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {Router} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
 import {BoardDTO} from '../../../types/board';
 import {Cell, Player} from '../../../types/cell';
@@ -24,7 +23,6 @@ import {EndGameDialog} from './end-game/end-game.dialog';
 export default class BoardComponent {
   readonly #dialog = inject(MatDialog);
   readonly #httpClient = inject(HttpClient);
-  readonly #router = inject(Router);
 
   protected readonly game = initialSignal<BoardDTO>('board');
   protected readonly currentPlayer = signal<Player>('1');
@@ -43,7 +41,7 @@ export default class BoardComponent {
     });
   }
 
-  async move(index: number) {
+  move(index: number) {
     const {board} = this.game();
 
     if (board[index] === '0') {
@@ -61,12 +59,8 @@ export default class BoardComponent {
       }
 
       if (dialog) {
-        const result = await firstValueFrom(dialog.afterClosed());
         this.state.set('END');
-
-        if (result) {
-          this.#router.navigateByUrl('/board/new', {onSameUrlNavigation: 'reload'});
-        }
+        dialog.afterClosed();
       } else {
         this.currentPlayer.update(current => current === '1' ? '2' : '1');
         this.state.set('IN_PROGRESS');
@@ -75,21 +69,21 @@ export default class BoardComponent {
   }
 
   async save() {
-    const board = this.game();
+    const game = this.game();
 
-    if (board.id === undefined) {
+    if (game.id === undefined) {
       const dialogRef = this.#dialog.open(AddNameDialog);
 
       dialogRef.afterClosed().subscribe(async name => {
         if (name) {
           const body = {
-            board: board.board,
+            board: game.board,
             name
           };
 
           try {
             const response = (await firstValueFrom(this.#httpClient.post('http://localhost:5000/boards', body))) as BoardDTO;
-            board.id = response.id;
+            game.id = response.id;
           } catch (e) {
             console.error(e);
           }
@@ -97,11 +91,11 @@ export default class BoardComponent {
       });
     } else {
       const body = {
-        board: board.board,
-        name: board.name
+        board: game.board,
+        name: game.name
       };
 
-      this.#httpClient.patch(`/boards/${board.id}`, body);
+      this.#httpClient.patch(`/boards/${game.id}`, body);
     }
   }
 

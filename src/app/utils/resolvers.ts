@@ -3,12 +3,14 @@ import {inject} from '@angular/core';
 import {ActivatedRouteSnapshot} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
 
-export function boardResolver(route: ActivatedRouteSnapshot) {
-  const id = route.paramMap.get('id');
+export function boardResolver(snapshot: ActivatedRouteSnapshot) {
+  const id = snapshot.paramMap.get('id');
 
   if (id === 'new') {
+    const size = snapshot.queryParams['size'] ?? 3;
+
     return {
-      board: '000000000',
+      board: Array(size * size).fill('0').join(''),
       name: ''
     };
   }

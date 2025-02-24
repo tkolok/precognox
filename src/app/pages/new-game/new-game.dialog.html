@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Start new game</h2>
+<mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Size</mat-label>
+    <input [(ngModel)]="size"
+           matInput
+           max="7"
+           min="3"
+           type="number"/>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-dialog-close
+          mat-stroked-button>
+    Cancel
+  </button>
+  <button (click)="start()"
+          mat-flat-button>
+    Start
+  </button>
+</mat-dialog-actions>
