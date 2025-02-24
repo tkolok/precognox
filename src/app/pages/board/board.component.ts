@@ -2,10 +2,10 @@ import {HttpClient} from '@angular/common/http';
 import {afterNextRender, Component, computed, inject, signal} from '@angular/core';
 import {MatButton, MatMiniFabButton} from '@angular/material/button';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {firstValueFrom} from 'rxjs';
 import {BoardDTO} from '../../../types/board';
 import {Cell, Player} from '../../../types/cell';
 import {CellPipe} from '../../pipes/cell.pipe';
+import {AsyncClientService} from '../../services/async-client.service';
 import {initialSignal} from '../../utils/signals';
 import {AddNameDialog} from './add-name/add-name.dialog';
 import {EndGameDialog} from './end-game/end-game.dialog';
@@ -21,6 +21,7 @@ import {EndGameDialog} from './end-game/end-game.dialog';
   styleUrl: './board.component.scss'
 })
 export default class BoardComponent {
+  readonly #asyncClientService = inject(AsyncClientService);
   readonly #dialog = inject(MatDialog);
   readonly #httpClient = inject(HttpClient);
 
@@ -82,7 +83,7 @@ export default class BoardComponent {
           };
 
           try {
-            const response = (await firstValueFrom(this.#httpClient.post('http://localhost:5000/boards', body))) as BoardDTO;
+            const response = await this.#asyncClientService.createGame(body);
             game.id = response.id;
           } catch (e) {
             console.error(e);
@@ -95,7 +96,7 @@ export default class BoardComponent {
         name: game.name
       };
 
-      this.#httpClient.patch(`/boards/${game.id}`, body);
+      this.#asyncClientService.updateGame(game.id, body);
     }
   }
 
