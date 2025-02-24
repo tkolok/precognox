@@ -1,0 +1,7 @@
+<ul>
+  @for (game of games(); track game.id) {
+    <li>
+      <a [routerLink]="['/board', game.id]">{{ game.name }}</a>
+    </li>
+  }
+</ul>

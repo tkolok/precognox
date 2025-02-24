@@ -3,6 +3,8 @@ import {afterNextRender, Component, computed, inject, signal} from '@angular/cor
 import {MatButton} from '@angular/material/button';
 import {MatDialog} from '@angular/material/dialog';
 import {firstValueFrom} from 'rxjs';
+import {BoardDTO} from '../../../types/board';
+import {Cell, Player} from '../../../types/cell';
 import {initialSignal} from '../../utils/signals';
 import {AddNameDialog} from './add-name/add-name.dialog';
 
@@ -127,11 +129,3 @@ export default class BoardComponent {
     this.#checkRow(board, 0, size - 1, 1, -1);
   }
 }
-
-export type BoardDTO = {
-  board: string;
-  id?: number;
-  name: string;
-}
-type Cell = '0' | Player;
-type Player = '1' | '2';

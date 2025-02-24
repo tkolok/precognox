@@ -1,5 +1,5 @@
 export type BoardDTO = {
   board: string;
-  id: number;
+  id?: number;
   name: string;
 }
