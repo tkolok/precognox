@@ -1,12 +1,14 @@
 import {HttpClient} from '@angular/common/http';
 import {afterNextRender, Component, computed, inject, signal} from '@angular/core';
 import {MatButton} from '@angular/material/button';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {Router} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
 import {BoardDTO} from '../../../types/board';
 import {Cell, Player} from '../../../types/cell';
 import {initialSignal} from '../../utils/signals';
 import {AddNameDialog} from './add-name/add-name.dialog';
+import {EndGameDialog} from './end-game/end-game.dialog';
 
 const cells = ['-', 'O', 'X'];
 
@@ -21,13 +23,13 @@ const cells = ['-', 'O', 'X'];
 export default class BoardComponent {
   readonly #dialog = inject(MatDialog);
   readonly #httpClient = inject(HttpClient);
+  readonly #router = inject(Router);
 
   protected readonly board = initialSignal<BoardDTO>('board');
   protected readonly currentPlayer = signal<Player>('1');
-  protected readonly draw = signal<boolean>(false);
   protected readonly savable = signal<boolean>(false);
   protected readonly size = computed(() => Math.floor(Math.sqrt(this.board()?.board.length ?? 9)));
-  protected readonly winner = signal<Cell>('0');
+  protected winner: Cell = '0';
 
   constructor() {
     afterNextRender(() => {
@@ -39,19 +41,34 @@ export default class BoardComponent {
     return cells[+cell];
   }
 
-  move(index: number) {
+  async move(index: number) {
     const board = this.board();
 
     if (board.board[index] === '0') {
       const current = [...board.board];
+      let dialog: MatDialogRef<EndGameDialog> | null = null;
 
       current.splice(index, 1, this.currentPlayer());
       board.board = current.join('');
 
       this.#checkWinner();
-      this.draw.set(!board.board.includes('0'));
-      this.currentPlayer.update(current => current === '1' ? '2' : '1');
-      this.savable.set(true);
+      if (this.winner !== '0') {
+        dialog = this.#dialog.open(EndGameDialog, {data: this.winner});
+      } else if (!board.board.includes('0')) {
+        dialog = this.#dialog.open(EndGameDialog, {data: '0'});
+      }
+
+      if (dialog) {
+        const result = await firstValueFrom(dialog.afterClosed());
+        this.savable.set(false);
+
+        if (result) {
+          this.#router.navigateByUrl('/board/new', {onSameUrlNavigation: 'reload'});
+        }
+      } else {
+        this.currentPlayer.update(current => current === '1' ? '2' : '1');
+        this.savable.set(true);
+      }
     }
   }
 
@@ -87,7 +104,7 @@ export default class BoardComponent {
   }
 
   #checkRow(board: Cell[][], fromX: number, fromY: number, incX: number, incY: number) {
-    if (this.winner() === '0') {
+    if (this.winner === '0') {
       const first = board[fromY][fromX];
 
       if (first === '0') {
@@ -101,7 +118,7 @@ export default class BoardComponent {
         }
       }
 
-      this.winner.set(first);
+      this.winner = first;
     }
   }
 
