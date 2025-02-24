@@ -1,12 +1,13 @@
 import {Component, inject} from '@angular/core';
+import {MatAnchor} from '@angular/material/button';
 import {MatIconRegistry} from '@angular/material/icon';
 import {DomSanitizer} from '@angular/platform-browser';
-import {RouterOutlet} from '@angular/router';
+import {RouterLink, RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, MatAnchor, RouterLink],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

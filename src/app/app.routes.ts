@@ -15,9 +15,5 @@ export const routes: Routes = [
     resolve: {
       games: savedGamesResolver
     }
-  },
-  {
-    path: '',
-    loadComponent: () => import('./pages/welcome/welcome.component')
   }
 ];
